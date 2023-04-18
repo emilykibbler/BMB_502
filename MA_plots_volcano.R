@@ -1,9 +1,18 @@
+#Author: Catrina Spruce
+#Contributor: Emily Kibbler
+
+#install.packages("readxl")
+#install.packages("tidyverse")
+#install.packages("ggrepel")
+
 library(readxl)
 library(tidyverse)
+library(ggrepel)
 all_data<-read_xlsx("/Users/emilykibbler/Desktop/ekibbler/Documents/Personal/class/GSE224615_DEGs.xlsx")
 all_data<- all_data %>% rename("5019" = "5019-3") #strip the suffix from this column name
 all_data<- all_data %>% rename("5057" = "5057-3") #same
 
+#plot using raw p values
 all_data$ave <- log2(rowMeans(all_data[, 5:40]))
 ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
   geom_point(aes(color = ifelse(pvalue<0.05, 'red', 'blue')),size=1) +
@@ -26,6 +35,8 @@ ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
         legend.text=element_text(size=12),
         panel.grid = element_line(linetype = "dashed", colour = "lightgrey"))
 
+
+#same plot, colors and labels adjusted to use adjusted p values
 ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
   geom_point(aes(color = ifelse(padj<0.05, 'red', 'blue')),size=1) +
   geom_label_repel(data = dplyr::filter(all_data, abs(log2FoldChange) > 2),
