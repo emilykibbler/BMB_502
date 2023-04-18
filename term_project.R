@@ -8,14 +8,14 @@
 library(readxl)
 library(tidyverse)
 library(ggrepel)
-all_data<-read_xlsx("/Users/emilykibbler/Desktop/ekibbler/Documents/Personal/class/GSE224615_DEGs.xlsx")
+all_data<-read_xlsx("GSE224615_DEGs.xlsx")
 all_data<- all_data %>% rename("5019-3" = "5019") #strip the suffix from this column name
 all_data<- all_data %>% rename("5057-3" = "5057") #same
 
 all_data$AveExpr<-rowMeans(all_data[,5:40])
 
 #read in sample matrix
-samples<-data.frame(read_xlsx("/Users/emilykibbler/Desktop/ekibbler/Documents/Personal/class/term_proj_sample_matrix.xlsx"))
+samples<-data.frame(read_xlsx("term_proj_sample_matrix.xlsx"))
 #samples<-samples[,c("PID","lc_status","sex")]
 
 #IDs to do pairwise scatterplots on
