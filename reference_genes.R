@@ -26,8 +26,21 @@ ref_genes<-ref_genes[order(ref_genes$var),][1:20,]
 view(ref_genes[order(ref_genes$AveExpr,decreasing=FALSE),])
 
 
+
 #Next steps: follow up in UCSC genome browser to further narrow down
 #Start by investigating top candidate: HNRNPA3
 #AKAP13: not great
 #SET: seems like it would work too
 #SLC44A2: another good candidate
+
+
+#compare our selection methods to validated housekeeping genes
+common_HKG<-c("ACTB", "B2M", "EF1α", "GAPDH", "GUSB", "HPRT", "PPIA", "RNA18S", "RPL13A", "TBP", "UBC", "YWHAZ")
+
+documented_HKG<-all_data[which(!is.na(match(all_data$Gene.name,common_HKG))),]
+documented_HKG$stdev<-NA
+for(i in 1:nrow(documented_HKG)){
+  documented_HKG$stdev[i]<-sd(documented_HKG[i,5:40])
+}
+documented_HKG$var<-documented_HKG$stdev/documented_HKG$AveExpr
+view(documented_HKG)

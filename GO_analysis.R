@@ -26,7 +26,6 @@ view(subset(filters_df,grepl("ensembl",filters_df$name,fixed=FALSE,ignore.case=T
 
 
 #head(getBM(attributes=c('go_id','definition_1006','description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl))
-head(getBM(attributes=c('go_id','definition_1006','description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl))
 
 go_results<-getBM(attributes=c('goslim_goa_description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl)
 
