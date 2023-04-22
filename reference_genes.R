@@ -35,6 +35,7 @@ view(ref_genes[order(ref_genes$AveExpr,decreasing=FALSE),])
 
 
 #compare our selection methods to validated housekeeping genes
+#source: /doi.org/10.1371/journal.pone.0260902
 common_HKG<-c("ACTB", "B2M", "EF1α", "GAPDH", "GUSB", "HPRT", "PPIA", "RNA18S", "RPL13A", "TBP", "UBC", "YWHAZ")
 
 documented_HKG<-all_data[which(!is.na(match(all_data$Gene.name,common_HKG))),]
