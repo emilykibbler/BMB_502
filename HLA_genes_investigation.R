@@ -62,7 +62,7 @@ HLA_genes%>% ggplot(aes(x=lc_status,y=Gene.name,fill=Signal))+
   xlab("LC status")+
   scale_fill_gradient(low="white",high="purple")+
   ggtitle("HLA gene expression: Long Covid analysis")
-ggsave("HLA_heatmap.png")
+#ggsave("HLA_heatmap.png")
 
 
 
@@ -81,7 +81,7 @@ subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=lc_status,y=Gene.name,f
   xlab("LC status")+
   scale_fill_gradient(low="white",high="purple")+
   ggtitle("HLA class II gene expression in Long Covid")
-ggsave("HLA_classII_heatmap.png")
+#ggsave("HLA_classII_heatmap.png")
 
 #look at class I alone to be fair
 subset(HLA_genes,HLA_genes$Class=="I") %>% ggplot(aes(x=lc_status,y=Gene.name,fill=Signal))+
@@ -102,7 +102,7 @@ HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) +
   xlab("Gene")+
   theme(axis.text.x=element_text(angle=45,hjust=1))+
   ggtitle("HLA expression for all subjects")
-ggsave("HLA_expression_summary_boxplot.png")
+#ggsave("HLA_expression_summary_boxplot.png")
 
 HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=Signal,color=lc_status)) + 
   geom_boxplot()+
@@ -110,7 +110,7 @@ HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=Signal,color=lc_status)) +
   xlab("Gene")+
   theme(axis.text.x=element_text(angle=45,hjust=1))+
   ggtitle("HLA gene expression")
-ggsave("HLA_gene_expression_boxplot.png")
+#ggsave("HLA_gene_expression_boxplot.png")
 
 #HLA genes for everyone, log scale
 

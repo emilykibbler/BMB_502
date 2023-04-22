@@ -24,9 +24,9 @@ small_list<-c("GSM7027483", "GSM7027491", "GSM7027494", "GSM7027479", "GSM702750
 sample_subset<-samples%>%filter((Library.Name %in% small_list))
 data_subset<-all_data[, which((names(all_data) %in% sample_subset$PID)==TRUE)]
 
-pdf("pairwise.pdf")
+#pdf("pairwise.pdf")
 pairs(data_subset)
-dev.off()
+#dev.off()
 
 #head(all_data)
 reformat<-data.frame(matrix(ncol=6,nrow=0))
