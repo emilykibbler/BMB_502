@@ -12,14 +12,22 @@ all_data<- all_data %>% rename("5019" = "5019-3") #strip the suffix from this co
 all_data<- all_data %>% rename("5057" = "5057-3") #same
 all_data$AveExpr<-rowMeans(all_data[,5:40])
 
-ref_genes<-subset(all_data,all_data$pvalue>0.99&all_data$AveExpr>1000)
+#filter data to include genes with log2fc <1 and average expression >10000 reads
+ref_genes<-subset(all_data,all_data$log2FoldChange<1&all_data$log2FoldChange>-1&all_data$AveExpr>10000)
+nrow(ref_genes) #454 candidate genes at this point
 ref_genes$stdev<-NA
 for(i in 1:nrow(ref_genes)){
   ref_genes$stdev[i]<-sd(ref_genes[i,5:40])
 }
-ref_genes<-subset(ref_genes,ref_genes$stdev<500)
+ref_genes$var<-ref_genes$stdev/ref_genes$AveExpr #standard deviation as a fraction of mean reads
+#take the top 20 least variable genes
+ref_genes<-ref_genes[order(ref_genes$var),][1:20,]
 
-view(ref_genes)
-view(ref_genes$Gene.name)
+view(ref_genes[order(ref_genes$AveExpr,decreasing=FALSE),])
+
 
 #Next steps: follow up in UCSC genome browser to further narrow down
+#Start by investigating top candidate: HNRNPA3
+#AKAP13: not great
+#SET: seems like it would work too
+#SLC44A2: another good candidate
