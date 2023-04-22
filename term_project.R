@@ -181,6 +181,7 @@ view(subset(all_data,all_data$padj<0.05))
 most_changed<-all_data[order(all_data$log2FoldChange),][1:250,] #most downregulated genes
 most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreasing=TRUE),][1:250,])
 write.table(most_changed$ID,file="top500.txt",row.names=FALSE,col.names=FALSE)
+#write.table(most_changed$ID,file="top500.txt",row.names=FALSE,col.names=FALSE)
 #this can be used to feed into webgestalt or other
 
 #candidates for best housekeeping genes

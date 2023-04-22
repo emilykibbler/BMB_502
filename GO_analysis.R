@@ -25,6 +25,7 @@ view(subset(attributes_df,grepl("go",attributes_df$description,fixed=FALSE,ignor
 view(subset(filters_df,grepl("ensembl",filters_df$name,fixed=FALSE,ignore.case=TRUE)==TRUE))
 
 
+#head(getBM(attributes=c('go_id','definition_1006','description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl))
 head(getBM(attributes=c('go_id','definition_1006','description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl))
 
 go_results<-getBM(attributes=c('goslim_goa_description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl)
@@ -49,3 +50,6 @@ nrow(subset(summary,summary$Frequency>10)) #top 38 GO descriptions
 subset(summary,summary$Frequency>10) %>% ggplot(aes(x=Term,y=Frequency))+
   geom_bar(stat="identity")+
   theme(axis.text.x=element_text(angle=45,hjust=1))
+
+go_results<-getBM(attributes=c('go_id','definition_1006','description','external_gene_name'),filters=	'ensembl_gene_id',most_changed$ID,mart=ensembl)
+
