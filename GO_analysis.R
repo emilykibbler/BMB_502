@@ -1,7 +1,11 @@
 #Author: Emily Kibbler
 
+#install.packages("tidyverse")
+#install.packages("readxl")
 #install.packages("Bioconductor")
 BiocManager::install("biomaRt")
+library(tixyverse)
+library(readxl)
 library(biomaRt)
 
 
