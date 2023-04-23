@@ -11,18 +11,13 @@ all_data<-read_xlsx("GSE224615_DEGs.xlsx")
 most_changed<-all_data
 most_changed$abs_change<-abs(most_changed$log2FoldChange)
 most_changed<-most_changed[order(most_changed$abs_change,decreasing = TRUE),]
-most_changed<-most_changed[1:250,] #subset on the top 250
 most_changed<-most_changed[1:250,] #subset on the top 250 most changed in either direction
 
-most_changed<-all_data[order(all_data$log2FoldChange),][1:250,] #most downregulated genes
-most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreasing=TRUE),][1:250,])
 #top 200 downregulated, top 200 upregulated
 most_changed<-all_data[order(all_data$log2FoldChange),][1:100,] #most downregulated genes
 most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreasing=TRUE),][1:100,])
 
-#write.table(most_changed$ID,file="top500.txt",row.names=FALSE,col.names=FALSE)
 view(most_changed)
-
 
 #subset on fc more than 1.4
 view(subset(most_changed,most_changed$abs_change>1.4))
