@@ -4,7 +4,7 @@
 #install.packages("readxl")
 #install.packages("Bioconductor")
 BiocManager::install("biomaRt")
-library(tixyverse)
+library(tidyverse)
 library(readxl)
 library(biomaRt)
 
