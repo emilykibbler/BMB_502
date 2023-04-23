@@ -23,3 +23,12 @@ data_subset<-all_data[, which((names(all_data) %in% sample_subset$PID)==TRUE)]
 #pdf("pairwise.pdf")
 pairs(data_subset)
 #dev.off()
+
+#cut one from each condition to make each panel bigger
+
+smaller_list<-c( "GSM7027491", "GSM7027494", "GSM7027508", "GSM7027484", "GSM7027486", "GSM7027503","GSM7027493", "GSM7027481") 
+sample_subset2<-samples%>%filter((Library.Name %in% smaller_list))
+data_subset2<-all_data[, which((names(all_data) %in% sample_subset2$PID)==TRUE)]
+
+#pdf("pairwise.pdf")
+pairs(data_subset2)
