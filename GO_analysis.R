@@ -24,7 +24,8 @@ most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreas
 view(most_changed)
 
 #subset on fc more than 1
-view(subset(most_changed,most_changed$abs_change>1))
+fc_more_than_one<-subset(most_changed,most_changed$abs_change>1)
+#write.csv(fc_more_than_one,"fc_more_than_one.csv",row.names=FALSE)
 
 ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
 listFilters(ensembl)
