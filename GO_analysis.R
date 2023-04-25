@@ -17,9 +17,11 @@ most_changed$abs_change<-abs(most_changed$log2FoldChange)
 most_changed<-most_changed[order(most_changed$abs_change,decreasing = TRUE),]
 most_changed<-most_changed[1:250,] #subset on the top 250 most changed in either direction
 
-#top 100 downregulated, top 100 upregulated
-most_changed<-all_data[order(all_data$log2FoldChange),][1:100,] #most downregulated genes
-most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreasing=TRUE),][1:100,])
+#top 20 downregulated, top 20 upregulated
+most_changed<-all_data
+most_changed<-all_data[order(all_data$log2FoldChange),][1:20,] #most downregulated genes
+most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreasing=TRUE),][1:20,])
+most_changed<-most_changed[,c(1:4,41)]
 
 view(most_changed)
 
