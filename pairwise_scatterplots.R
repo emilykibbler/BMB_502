@@ -31,4 +31,18 @@ sample_subset2<-samples%>%filter((Library.Name %in% smaller_list))
 data_subset2<-all_data[, which((names(all_data) %in% sample_subset2$PID)==TRUE)]
 
 #pdf("pairwise.pdf")
-pairs(data_subset2)
+#pairs(data_subset2)
+
+sample_subset2$pairwise_scatterplot<-"yes"
+sample_subset$pairwise_scatterplot<-"no"
+
+detailed_matrix<-rbind(sample_subset2,sample_subset[which(is.na(match(sample_subset$PID,sample_subset2$PID))),])
+
+detailed_matrix$mapping<-"yes"
+
+samples$pairwise_scatterplot<-"no"
+samples$mapping<-"no"
+
+detailed_matrix<-rbind(detailed_matrix,samples[which(is.na(match(samples$PID,detailed_matrix$PID))),])
+
+

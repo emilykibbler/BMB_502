@@ -28,3 +28,4 @@ vignettes/*.pdf
 .Renviron
 .DS_Store
 fc_more_than_one.csv
+sample_matrix_table.csv
