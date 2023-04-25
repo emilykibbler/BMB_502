@@ -62,7 +62,21 @@ ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
 ## Try a volcano plot
 ggplot(all_data, aes(x = log2FoldChange, y = -log(pvalue, 10), label = Gene.name)) +
   geom_point() +
-  #  geom_point(color = dplyr::case_when(df$name %in% factors ~ "red")) +
+  geom_point(aes(color = ifelse(pvalue<0.05, 'red', 'blue')),size=1) +
+  geom_label_repel(data = dplyr::filter(all_data, abs(log2FoldChange)>1.5),
+                   size = 3,
+                   box.padding = .5,
+                   max.overlaps=20) +
+  labs(x = "log2FoldChange", y = "-log10(p-value)", color = "legend") +
+  ggtitle("Volcano plot of d.e. genes, LC vs non-LC")
+theme_bw() +
+  theme(axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12))
+#
+## Try a volcano plot with adj p values
+ggplot(all_data, aes(x = log2FoldChange, y = -log(padj, 10), label = Gene.name)) +
+  geom_point() +
+  geom_point(aes(color = ifelse(padj<0.05, 'red', 'blue')),size=1) + +
   geom_label_repel(data = dplyr::filter(all_data, abs(log2FoldChange)>1.5),
                    size = 3,
                    box.padding = .5,

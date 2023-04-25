@@ -26,7 +26,6 @@ HK_genes<-HK_genes[order(HK_genes$var),][1:20,]
 view(HK_genes[order(HK_genes$AveExpr,decreasing=FALSE),])
 
 
-
 #Next steps: follow up in UCSC genome browser to further narrow down
 #Start by investigating top candidate: HNRNPA3
 #AKAP13: not great
