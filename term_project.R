@@ -10,7 +10,7 @@ library(tidyverse)
 library(ggrepel)
 
 all_data<-read_xlsx("GSE224615_DEGs.xlsx")
-all_data<- all_data %>% rename("5019-3" = "5019") #strip the suffix from this column name
+all_data<- all_data %>% rename("5019-3" = "5019") #strip the unnecessary suffix from this column name
 all_data<- all_data %>% rename("5057-3" = "5057") #same
 
 all_data$AveExpr<-rowMeans(all_data[,5:40])
@@ -18,6 +18,7 @@ all_data$AveExpr<-rowMeans(all_data[,5:40])
 #read in sample matrix
 samples<-data.frame(read_xlsx("term_proj_sample_matrix.xlsx"))
 #samples<-samples[,c("PID","lc_status","sex")]
+view(samples[,c("PID","lc_status","sex")])
 
 #IDs to do pairwise scatterplots on
 small_list<-c("GSM7027483", "GSM7027491", "GSM7027494", "GSM7027479", "GSM7027508", "GSM7027484", "GSM7027501", "GSM7027486", "GSM7027503","GSM7027487", "GSM7027493", "GSM7027481") 
