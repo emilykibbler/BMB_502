@@ -26,7 +26,7 @@ sample_subset<-samples%>%filter((Library.Name %in% small_list))
 data_subset<-all_data[, which((names(all_data) %in% sample_subset$PID)==TRUE)]
 
 #pdf("pairwise.pdf")
-pairs(data_subset)
+#pairs(data_subset)
 #dev.off()
 
 #head(all_data)
