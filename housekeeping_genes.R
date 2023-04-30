@@ -8,8 +8,6 @@ library(readxl)
 library(tidyverse)
 
 all_data<-read_xlsx("GSE224615_DEGs.xlsx")
-all_data<- all_data %>% rename("5019" = "5019-3") #strip the suffix from this column name
-all_data<- all_data %>% rename("5057" = "5057-3") #same
 all_data$AveExpr<-rowMeans(all_data[,5:40])
 
 #filter data to include genes with log2fc <1 and average expression >10000 reads
@@ -19,9 +17,9 @@ HK_genes$stdev<-NA
 for(i in 1:nrow(HK_genes)){
   HK_genes$stdev[i]<-sd(HK_genes[i,5:40])
 }
-HK_genes$var<-HK_genes$stdev/HK_genes$AveExpr #standard deviation as a fraction of mean reads
+HK_genes$CV<-HK_genes$stdev/HK_genes$AveExpr #standard deviation as a fraction of mean reads
 #take the top 20 least variable genes
-HK_genes<-HK_genes[order(HK_genes$var),][1:20,]
+HK_genes<-HK_genes[order(HK_genes$CV),][1:20,]
 
 view(HK_genes[order(HK_genes$AveExpr,decreasing=FALSE),])
 
