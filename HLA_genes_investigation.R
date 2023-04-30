@@ -52,6 +52,7 @@ HLA_genes%>% ggplot(aes(x=lc_status,y=Gene.name,fill=Signal))+
   ylab("Gene name")+
   xlab("LC status")+
   scale_fill_gradient(low="white",high="purple")+
+  labs(fill="Avg read count")+
   ggtitle("HLA gene expression: Long Covid analysis")
 #ggsave("HLA_heatmap.png")
 
@@ -115,8 +116,9 @@ subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y
   ylab("Normalized read count:log2 scale")+
   xlab("Gene")+
   theme(axis.text.x=element_text(angle=45,hjust=1))+
+  labs(color="LC status")+
   ggtitle("HLA class II expression")
-
+#ggsave("class_II_boxplot.png")
 
 #class I and class II are different expression levels
 #split into separate graphs to see better

@@ -1,7 +1,11 @@
-#Author: Catrina Spruce
-#install.packages("readxl")
+#R code for analysis of: https://doi.org/10.1101/2023.02.09.527892
+#Work in progress
+#Author: Catrina Spruce, contributor: Emily Kibbler
+#install.packages("readxl)
 #install.packages("tidyverse")
 #install.packages("ggrepel")
+
+
 library(readxl)
 library(tidyverse)
 library(ggrepel)
@@ -13,10 +17,12 @@ all_data<- all_data %>% rename("5057" = "5057-3") #same
 all_data <- all_data %>% dplyr::filter(rowSums(all_data[, 5:40])>200)
 
 ## Check for normal read count distribution
-hist(all_data$"5044") 
+hist(all_data$"5044", main="Histogram of expression, sample 5044",
+     xlab="Expression level") 
 ## This is NOT normal! Huge tail
 ## TRy log2
-hist(log2(all_data$"5044"))
+hist(log2(all_data$"5044"), main="Histogram of log2 expression, sample 5044",
+     xlab="Log2 expression level")
 ## Better. Let's check another
 hist(log2(all_data$"5053"))
 ## Looks the same
@@ -29,18 +35,13 @@ meta <- all_data %>% dplyr::select(Gene.name, ID, log2FoldChange, pvalue, padj)
 all_data <- cbind(meta, counts)
 
 ## Load dataframe with sample metadata
-samples<-data.frame(read_xlsx("term_proj_sample_matrix.xlsx"))
+samples<-data.frame(read_xlsx("C:/Users/cspruce/OneDrive - The Jackson Laboratory/Catrina/class/IntroBioinformatics/term_proj_sample_matrix.xlsx"))
 samples <- samples %>% arrange(PID)
 
 ## Subset for 12 working samples
-#small_list<-c("GSM7027483", "GSM7027491", "GSM7027494", "GSM7027479", "GSM7027508", "GSM7027484", "GSM7027501", "GSM7027486", "GSM7027503","GSM7027487", "GSM7027493", "GSM7027481") 
-#sample_subset <- samples[(samples$Library.Name %in% small_list), ]
-#data_subset<-all_data[, which((colnames(all_data) %in% sample_subset$PID)==TRUE)]
-
-## Make scatterplots of sample pairs
-#pdf("pairwise.pdf")
-#pairs(data_subset)
-#dev.off()
+small_list<-c("GSM7027483", "GSM7027491", "GSM7027494", "GSM7027479", "GSM7027508", "GSM7027484", "GSM7027501", "GSM7027486", "GSM7027503","GSM7027487", "GSM7027493", "GSM7027481") 
+sample_subset <- samples[(samples$Library.Name %in% small_list), ]
+data_subset<-all_data[, which((colnames(all_data) %in% sample_subset$PID)==TRUE)]
 
 ## Perform PCA to look for separation of LC vs non-LC
 #order <- order(colnames(all_data2)) ## Samples are already in numerical order
@@ -53,8 +54,8 @@ variance_exp <- (pc$sdev)^2 / sum(pc$sdev^2)
 
 # plot
 ggplot(data = counts.pca, aes(x = PC1, y = PC2, shape = as.factor(sex),  color=as.factor(lc_status))) +
-  geom_point(size = 5) +
-  scale_color_manual(breaks = c("LC", "non-LC"), values=c("red", "green")) +
+  geom_point(size = 4) +
+  scale_color_manual(breaks = c("LC", "Non-LC"), values=c("red", "green")) +
   labs(color = "Strain",
        shape = "Sex",
        x = paste0("PC1 variance explanded (", round(variance_exp[1]*100, 1), "%)"),
@@ -77,12 +78,12 @@ ggplot(data = counts.pca, aes(x = PC1, y = PC2, shape = as.factor(sex),  color=a
 ## Exclude poor samples and try again.
 ## Perform PCA to look for separation of LC vs non-LC
 #order <- order(colnames(all_data2)) ## Samples are already in numerical order
-mat <- all_data[ , -c(1:5)] %>% dplyr::select(-c("5019", "5057"))
-samples <- samples %>% dplyr::filter(!PID %in% c("5019", "5057"))
-pc <- prcomp( t(mat) ) # calculate PCA
+mat2 <- all_data[ , -c(1:5)] %>% dplyr::select(-c("5019", "5057"))
+samples2 <- samples %>% dplyr::filter(!PID %in% c("5019", "5057"))
+pc <- prcomp( t(mat2) ) # calculate PCA
 
 # collect principle components 
-counts.pca <- data.frame(cbind(pc$x, samples))
+counts.pca <- data.frame(cbind(pc$x, samples2))
 variance_exp <- (pc$sdev)^2 / sum(pc$sdev^2)
 
 # plot
@@ -171,6 +172,29 @@ ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
         legend.title=element_text(size=14), 
         legend.text=element_text(size=12),
         panel.grid = element_line(linetype = "dashed", colour = "lightgrey"))
+
+## What about coloring by adjusted p-value
+ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
+  geom_point(aes(color = ifelse(padj<0.05, 'red', 'blue')),size=1) +
+  geom_label_repel(data = dplyr::filter(all_data, padj<0.05),
+                   size = 3,
+                   box.padding = .5,
+                   max.overlaps=25,
+                   nudge_y = 1.0E-6) + ## This forces
+  scale_colour_manual(labels = c("not sig", "padj<0.05"), values=c('blue',    'red')) + 
+  labs(color = "legend", 
+       y = "log2FoldChange", 
+       x = "Average log2 expression") +
+  ggtitle("MA plot d.e. genes, LC vs non-LC") +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),
+        axis.title.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        legend.title=element_text(size=14), 
+        legend.text=element_text(size=12),
+        panel.grid = element_line(linetype = "dashed", colour = "lightgrey"))
+
 
 
 ## Try a volcano plot
