@@ -84,10 +84,7 @@ subset(HLA_genes,HLA_genes$Class=="I") %>% ggplot(aes(x=lc_status,y=Gene.name,fi
   ggtitle("HLA class I gene expression in Long Covid")
 #unremarkable
 
-
-#Investigate whether HLA genes are tightly regulated
-#i.e., not differential expressed between people, or are differentially expressed but not due to LC
-
+#change to boxplot view
 HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
   geom_boxplot()+
   ylab("Normalized read count")+
@@ -164,6 +161,6 @@ HLA_genes_table$stdev<-NA
 for(i in 1:nrow(HLA_genes_table)){
   HLA_genes_table$stdev[i]<-sd(HLA_genes_table[i,5:40])
 }
-HLA_genes_table$var<-HLA_genes_table$stdev/HLA_genes_table$AveExpr
+HLA_genes_table$CV<-HLA_genes_table$stdev/HLA_genes_table$AveExpr
 
 view(HLA_genes_table)
