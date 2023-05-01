@@ -43,132 +43,8 @@ for(i in 1:36){
 }
 
 
-HLA_genes<-subset(reformat,grepl("HLA",reformat$Gene.name,fixed=FALSE)==TRUE)
-HLA_genes<-subset(HLA_genes,HLA_genes$Gene.name!="HHLA3")
-HLA_genes<-subset(HLA_genes,HLA_genes$Gene.name!="HHLA2")
-
-#wondering if HLA gene expression changes a lot between people regardless of LC status or if it's tightly regulated in general
-
-HLA_genes_table<-subset(all_data,grepl("HLA",all_data$Gene.name,fixed=FALSE)==TRUE)
-HLA_genes_table<-subset(HLA_genes_table,HLA_genes_table$Gene.name!="HHLA3")
-HLA_genes_table<-subset(HLA_genes_table,HLA_genes_table$Gene.name!="HHLA2")
-HLA_genes_table$stdev<-NA
-for(i in 1:nrow(HLA_genes_table)){
-  HLA_genes_table$stdev[i]<-sd(HLA_genes_table[i,5:40])
-}
-HLA_genes_table$dev_over_mean<-HLA_genes_table$stdev/HLA_genes_table$AveExpr
-view(HLA_genes_table)
-
-#define class I and class II
-HLA_genes$Class<-NA
-for(i in 1:nrow(HLA_genes)){
-  if(HLA_genes$Gene.name[i]=="HLA-A"|HLA_genes$Gene.name[i]=="HLA-B"|HLA_genes$Gene.name[i]=="HLA-C"){
-    HLA_genes$Class[i]<-"I"}else{HLA_genes$Class[i]<-"II"}
-  }
-
-
-
-
-HLA_genes%>% ggplot(aes(x=lc_status,y=Gene.name,fill=Signal))+
-  geom_tile()+
-  ylab("Gene name")+
-  xlab("LC status")+
-  scale_fill_gradient(low="white",high="purple")+
-  ggtitle("HLA gene expression: Long Covid analysis")
-
-
-HLA_genes%>% ggplot(aes(x=sex,y=Gene.name,fill=Signal))+
-  geom_tile()+
-  ylab("Gene name")+
-  xlab("Sex")+
-  scale_fill_gradient(low="white",high="purple")+
-  ggtitle("HLA gene expression: Sex difference analysis")
-
-subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=lc_status,y=Gene.name,fill=Signal))+
-  geom_tile()+
-  ylab("Gene name")+
-  xlab("LC status")+
-  scale_fill_gradient(low="white",high="purple")+
-  ggtitle("HLA class II gene expression in Long Covid")
-
-
-subset(HLA_genes,HLA_genes$Class=="I") %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized read count")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class I expression for all subjects")
-
-subset(HLA_genes,HLA_genes$Class=="I"&HLA_genes$lc_status=="Non-LC") %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized read count")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class I expression for non-LC subjects")
-
-subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y=log(Signal))) + 
-  geom_boxplot()+
-  ylab("Normalized reads: log10 scale")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class II expression for all subjects")
-
-subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized reads")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class II expression for all subjects")
-
 #MA plot
-
-#all_data$AveExpr<-rowMeans(all_data[,5:40])
-
-all_data$ave <- log2(rowMeans(all_data[, 5:40]))
-ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
-  geom_point(aes(color = ifelse(pvalue<0.05, 'red', 'blue')),size=1) +
-  geom_label_repel(data = dplyr::filter(all_data, abs(log2FoldChange) > 2),
-                   size = 3,
-                   box.padding = .5,
-                   max.overlaps=25,
-                   nudge_y = 1.0E-6) + ## This forces
-  scale_colour_manual(labels = c("not sig", "p<0.05"), values=c('blue',    'red')) + 
-  labs(color = "legend", 
-       y = "log2FoldChange", 
-       x = "Average log2 expression") +
-  ggtitle("MA plot d.e. genes, LC vs non-LC") +
-  theme_bw() +
-  theme(axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14),
-        axis.title.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        legend.title=element_text(size=14), 
-        legend.text=element_text(size=12),
-        panel.grid = element_line(linetype = "dashed", colour = "lightgrey"))
-
-#Slightly modified plot with adjusted instead of raw p-values
-
-all_data$ave <- log2(rowMeans(all_data[, 5:40]))
-ggplot(all_data, aes(x=ave, y=log2FoldChange, label=Gene.name)) +
-  geom_point(aes(color = ifelse(padj<0.05, 'red', 'blue')),size=1) +
-  geom_label_repel(data = dplyr::filter(all_data, abs(log2FoldChange) > 2),
-                   size = 3,
-                   box.padding = .5,
-                   max.overlaps=25,
-                   nudge_y = 1.0E-6) + ## This forces
-  scale_colour_manual(labels = c("not sig", "padj<0.05"), values=c('blue',    'red')) + 
-  labs(color = "legend", 
-       y = "log2FoldChange", 
-       x = "Average log2 expression") +
-  ggtitle("MA plot d.e. genes, LC vs non-LC") +
-  theme_bw() +
-  theme(axis.text.x = element_text(size = 14),
-        axis.text.y = element_text(size = 14),
-        axis.title.x = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        legend.title=element_text(size=14), 
-        legend.text=element_text(size=12),
-        panel.grid = element_line(linetype = "dashed", colour = "lightgrey"))
+#migrated to separate code file
 
 #manually look at most-changed genes
 summary(all_data$log2FoldChange)
@@ -181,20 +57,12 @@ view(subset(all_data,all_data$padj<0.05))
 
 most_changed<-all_data[order(all_data$log2FoldChange),][1:250,] #most downregulated genes
 most_changed<-rbind(most_changed,all_data[order(all_data$log2FoldChange, decreasing=TRUE),][1:250,])
-write.table(most_changed$ID,file="top500.txt",row.names=FALSE,col.names=FALSE)
+#write.table(most_changed$ID,file="top500.txt",row.names=FALSE,col.names=FALSE)
 #write.table(most_changed$ID,file="top500.txt",row.names=FALSE,col.names=FALSE)
 #this can be used to feed into webgestalt or other
 
 #candidates for best housekeeping genes
-
-ref_genes<-subset(all_data,all_data$pvalue>0.99&all_data$AveExpr>1000)
-ref_genes$stdev<-NA
-for(i in 1:nrow(ref_genes)){
-  ref_genes$stdev[i]<-sd(ref_genes[i,5:40])
-}
-ref_genes<-subset(ref_genes,ref_genes$stdev<500)
-view(ref_genes)
-view(ref_genes$Gene.name)
+#pull from other code
 
 
 #significantly expressed genes: plots
@@ -229,19 +97,22 @@ b<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=
 
 ggarrange(a,b,common.legend=TRUE)
 
+c<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_violin()+
+  ggtitle("Gene expression: Non-LC")+
+  xlab("Gene name")+
+  ylab("Normalized reads: log2 scale")+
+  labs(fill="Gene type")+
+  theme(axis.text.x=element_text(angle=45,hjust=1))
 
-df %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
-  geom_boxplot()
 
-means<-tapply(df$Signal,df$Gene.name,FUN=mean)  
-means<-log2(means)
-sds<-tapply(df$Signal,df$Gene.name,FUN=sd)
-sds<-log2(sds)
+d<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_violin()+
+  ggtitle("Gene expression: LC")  +
+  xlab("Gene name")+
+  ylab("Normalized reads: log2 scale")+
+  theme(axis.text.x=element_text(angle=45,hjust=1))+
+  labs(fill="Gene type")
 
-df %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
-  geom_col()+
-  geom_errorbar(aes(x=Gene.name,ymin=means-sds,ymax=means+sds))
+ggarrange(c,d,common.legend=TRUE)
 
-df %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
-  geom_col()+
-  geom_errorbar(aes(x=Gene.name,ymin=as.numeric(means)-as.numeric(sds),ymax=as.numeric(means)+as.numeric(sds)))
