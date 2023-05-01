@@ -195,3 +195,53 @@ for(i in 1:nrow(ref_genes)){
 ref_genes<-subset(ref_genes,ref_genes$stdev<500)
 view(ref_genes)
 view(ref_genes$Gene.name)
+
+
+#significantly expressed genes: plots
+sig_genes<-subset(reformat,reformat$Gene.name=="OR7D2"|reformat$Gene.name=="ALAS2")
+sig_genes$type<-"LC-associated"
+doc<-subset(reformat,reformat$Gene.name=="GAPDH"|reformat$Gene.name=="ACTB")
+doc$type<-"Documented HKG"
+disc<-subset(reformat,reformat$Gene.name=="CBFA2T2"|reformat$Gene.name=="SP1")
+disc$type<-"Candidate HKG"
+df<-rbind(sig_genes,doc)
+df<-rbind(df,disc)
+
+a<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_boxplot()+
+  ggtitle("Gene expression: Non-LC")+
+  xlab("Gene name")+
+  ylab("Normalized reads: log2 scale")+
+  labs(fill="Gene type")+
+  theme(axis.text.x=element_text(angle=45,hjust=1))
+
+
+b<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_boxplot()+
+  ggtitle("Gene expression: LC")  +
+  xlab("Gene name")+
+  ylab("Normalized reads: log2 scale")+
+  theme(axis.text.x=element_text(angle=45,hjust=1))+
+  labs(fill="Gene type")
+
+#install.packages("ggpubr")
+#library(ggpubr)
+
+ggarrange(a,b,common.legend=TRUE)
+
+
+df %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_boxplot()
+
+means<-tapply(df$Signal,df$Gene.name,FUN=mean)  
+means<-log2(means)
+sds<-tapply(df$Signal,df$Gene.name,FUN=sd)
+sds<-log2(sds)
+
+df %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_col()+
+  geom_errorbar(aes(x=Gene.name,ymin=means-sds,ymax=means+sds))
+
+df %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+  geom_col()+
+  geom_errorbar(aes(x=Gene.name,ymin=as.numeric(means)-as.numeric(sds),ymax=as.numeric(means)+as.numeric(sds)))
