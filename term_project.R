@@ -75,16 +75,16 @@ disc$type<-"Candidate HKG"
 df<-rbind(sig_genes,doc)
 df<-rbind(df,disc)
 
-a<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+a<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=factor(Gene.name,level=c("GAPDH","ACTB","CBFA2T2","SP1","OR7D2")),y=log2(Signal),fill=type))+
   geom_boxplot()+
   ggtitle("Gene expression: Non-LC")+
   xlab("Gene name")+
   ylab("Normalized reads: log2 scale")+
   labs(fill="Gene type")+
   theme(axis.text.x=element_text(angle=45,hjust=1))
+a
 
-
-b<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+b<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=factor(Gene.name,level=c("GAPDH","ACTB","CBFA2T2","SP1","OR7D2")),y=log2(Signal),fill=type))+
   geom_boxplot()+
   ggtitle("Gene expression: LC")  +
   xlab("Gene name")+
@@ -93,11 +93,12 @@ b<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=
   labs(fill="Gene type")
 
 #install.packages("ggpubr")
-#library(ggpubr)
+library(ggpubr)
 
 ggarrange(a,b,common.legend=TRUE)
+#ggsave("genes.png")
 
-c<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+c<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=factor(Gene.name,level=c("GAPDH","ACTB","CBFA2T2","SP1","OR7D2")),y=log2(Signal),fill=type))+
   geom_violin()+
   ggtitle("Gene expression: Non-LC")+
   xlab("Gene name")+
@@ -106,7 +107,7 @@ c<-subset(df,df$lc_status=="Non-LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),f
   theme(axis.text.x=element_text(angle=45,hjust=1))
 
 
-d<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=type))+
+d<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=factor(Gene.name,level=c("GAPDH","ACTB","CBFA2T2","SP1","OR7D2")),y=log2(Signal),fill=type))+
   geom_violin()+
   ggtitle("Gene expression: LC")  +
   xlab("Gene name")+
@@ -115,4 +116,5 @@ d<-subset(df,df$lc_status=="LC") %>% ggplot(aes(x=Gene.name,y=log2(Signal),fill=
   labs(fill="Gene type")
 
 ggarrange(c,d,common.legend=TRUE)
+#ggsave("violin.png")
 

@@ -47,3 +47,5 @@ detailed_matrix<-rbind(detailed_matrix,samples[which(is.na(match(samples$PID,det
 
 #write.csv(detailed_matrix,"sample_matrix_table.csv",row.names=FALSE)
 
+
+
