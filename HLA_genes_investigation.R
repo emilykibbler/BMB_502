@@ -1,13 +1,12 @@
 #R code for analysis of: https://doi.org/10.1101/2023.02.09.527892
-#Work in progress
+#Data is normalized reads of RNA seq on 23 patients with long COVID (LC) and 13 non-LC controls
 #Author: Emily Kibbler
+#The purpose of this code is to do a deep dive on the HLA genes
 #install.packages("readxl)
 #install.packages("tidyverse")
-#install.packages("ggrepel")
 
 library(readxl)
 library(tidyverse)
-library(ggrepel)
 
 all_data<-read_xlsx("GSE224615_DEGs.xlsx")
 all_data<- all_data %>% rename("5019" = "5019-3") #strip the suffix from this column name
@@ -32,11 +31,10 @@ for(i in 1:36){
   reformat<-rbind(reformat,temp)
 }
 
-
 HLA_genes<-subset(reformat,grepl("HLA",reformat$Gene.name,fixed=FALSE)==TRUE)
-HLA_genes<-subset(HLA_genes,HLA_genes$Gene.name!="HHLA3") #character string matches that are not HLA genes
+#eliminate character string matches that are not HLA genes
+HLA_genes<-subset(HLA_genes,HLA_genes$Gene.name!="HHLA3") 
 HLA_genes<-subset(HLA_genes,HLA_genes$Gene.name!="HHLA2")
-
 
 
 #label class I and class II
@@ -55,8 +53,6 @@ HLA_genes%>% ggplot(aes(x=lc_status,y=Gene.name,fill=Signal))+
   labs(fill="Avg read count")+
   ggtitle("HLA gene expression: Long Covid analysis")
 #ggsave("HLA_heatmap.png")
-
-
 
 HLA_genes%>% ggplot(aes(x=sex,y=Gene.name,fill=Signal))+
   geom_tile()+
@@ -85,22 +81,15 @@ subset(HLA_genes,HLA_genes$Class=="I") %>% ggplot(aes(x=lc_status,y=Gene.name,fi
 #unremarkable
 
 #change to boxplot view
-HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized read count")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA expression for all subjects")
-#ggsave("HLA_expression_summary_boxplot.png")
-
+#all the genes
 HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=Signal,color=lc_status)) + 
   geom_boxplot()+
   ylab("Normalized read count")+
   xlab("Gene")+
   theme(axis.text.x=element_text(angle=45,hjust=1))+
   ggtitle("HLA gene expression")
-#ggsave("HLA_gene_expression_boxplot.png")
 
+#all the genes, log2 scale
 HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=log2(Signal),color=lc_status)) + 
   geom_boxplot()+
   ylab("Normalized read count: log2 scale")+
@@ -108,6 +97,7 @@ HLA_genes %>% ggplot(aes(x=as.factor(Gene.name), y=log2(Signal),color=lc_status)
   theme(axis.text.x=element_text(angle=45,hjust=1))+
   ggtitle("HLA gene expression")
 
+#Class II alone, log2 scale
 subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y=log2(Signal),color=lc_status)) + 
   geom_boxplot()+
   ylab("Normalized read count:log2 scale")+
@@ -117,42 +107,8 @@ subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y
   ggtitle("HLA class II expression")
 #ggsave("class_II_boxplot.png")
 
-#class I and class II are different expression levels
-#split into separate graphs to see better
-subset(HLA_genes,HLA_genes$Class=="I") %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized read count")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class I expression for all subjects")
 
-subset(HLA_genes,HLA_genes$Class=="II"&HLA_genes$lc_status=="Non-LC") %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized read count")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class II expression for non-LC subjects")
-
-subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y=Signal)) + 
-  geom_boxplot()+
-  ylab("Normalized reads")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class II expression for all subjects")
-
-#put Y axis in log scale
-subset(HLA_genes,HLA_genes$Class=="II") %>% ggplot(aes(x=as.factor(Gene.name), y=log(Signal))) + 
-  geom_boxplot()+
-  ylab("Normalized reads: log10 scale")+
-  xlab("Gene")+
-  theme(axis.text.x=element_text(angle=45,hjust=1))+
-  ggtitle("HLA class II expression for all subjects")
-
-
-
-
-
-#view data table-wise
+#view data table-wise for manual inspection
 
 HLA_genes_table<-subset(all_data,grepl("HLA",all_data$Gene.name,fixed=FALSE)==TRUE)
 HLA_genes_table<-subset(HLA_genes_table,HLA_genes_table$Gene.name!="HHLA3")
