@@ -1,4 +1,10 @@
+#Author: Gift Ifijeh
+#install.packages(tidyverse)
+
 library(tidyverse)
+
+all_data<-read_xlsx("GSE224615_DEGs.xlsx")
+
 
 ref_genes<-subset(all_data,all_data$pvalue>0.99&all_data$AveExpr>1500)
 ref_genes$stdev<-NA
